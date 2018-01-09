@@ -32,11 +32,11 @@ init_php () {
     echo "*** install epel-release"
     yum install -y epel-release
     
-#    echo "*** install remi-release"
-#    rpm -Uvh http://rpms.famillecollet.com/enterprise/remi-release-7.rpm
-#    if [ $? != 0 ]; then
-#        error "could not install remi-release"
-#    fi
+    echo "*** install remi-release"
+    rpm -Uvh http://rpms.famillecollet.com/enterprise/remi-release-7.rpm
+    if [ $? != 0 ]; then
+        error "could not install remi-release"
+    fi
     
     echo "*** install php7"
     yum install -y --enablerepo=remi,remi-php70 php php-devel php-pear
@@ -130,8 +130,3 @@ init_serv
 add_pack
 
 echo "ttr-web build is succeed"
-#index
-
-#ttr
-
-#cp -r $SCP_DIR/../src/* $TGT_PATH/src

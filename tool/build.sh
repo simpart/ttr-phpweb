@@ -1,90 +1,135 @@
-#/usr/bin 
+#!/bin/bash 
 SCP_DIR=$(cd $(dirname $0);pwd);
 TGT_PATH=''
+APP_TITLE=''
 
-check_path () {
-    echo '*** ttr-web init script ***'
+get_inf () {
+    echo "start ttr-web build"
     cd $SCP_DIR/../
-    echo -n 'target path : '
+    echo -n "deploy path : "
     read TGT_PATH
-
-    if [ -d $TGT_PATH ]; then
-        echo ''
-    else
-        echo 'target path is not found'
-        exit -1
+    
+    if [ ! -d $TGT_PATH ]; then
+        error "could not found target path"
     fi
-     
+    
+    echo -n "app title : "
+    read APP_TITLE
+    if [[ "" == ${APP_TITLE} ]]; then
+        error "app title is null"
+    fi
+    
+    if [ ! -d $TGT_PATH ]; then
+        echo "*** create app directory"
+        mkdir $TGT_PATH/$APP_TITLE
+        if [ $? != 0 ]; then
+            error "could not create $TGT_PATH/$APP_TITLE directory"
+        fi
+    fi
 }
 
 init_php () {
+    echo "*** install epel-release"
+    yum install -y epel-release
+    
+#    echo "*** install remi-release"
+#    rpm -Uvh http://rpms.famillecollet.com/enterprise/remi-release-7.rpm
+#    if [ $? != 0 ]; then
+#        error "could not install remi-release"
+#    fi
+    
+    echo "*** install php7"
+    yum install -y --enablerepo=remi,remi-php70 php php-devel php-pear
+    
+    echo "*** install yaml-module"
+    # install yaml module
     yum install -y gcc libyaml libyaml-devel
     if [ $? != 0 ]; then
-        exit;
+        error "could not install require package"
     fi
     pear channel-update pear.php.net
     pecl install YAML
     
     EXT_TXT="extension=yaml.so"
     INI_PATH="/etc/php.ini"
-    CHK_YML=$(cat $INI_PATH | grep $EXT_TXT)
+    if [ ! -f $INI_PATH ]; then
+        error "could not found php.ini"
+    fi
     
+    CHK_YML=$(cat $INI_PATH | grep $EXT_TXT)
     if [[ "" == ${CHK_YML} ]]; then
-        echo "add extension"
+        echo -e "\n*** add extension to php.ini ***\n"
         echo $EXT_TXT >> $INI_PATH
     fi
 }
 
 init_serv () {
+    echo "*** install httpd"
     yum install -y httpd
     if [ $? != 0 ]; then
-        exit;
+        error "install httpd is failed"
     fi
     
-    cp $SCP_DIR/route.conf.tmpl $SCP_DIR/route.conf
+    echo "*** set route.conf"
+    cp $SCP_DIR/../conf/serv/httpd.conf /etc/httpd/conf.d/${APP_TITLE}.conf
     if [ $? != 0 ]; then
-        exit;
+        error "set route.conf is failed"
     fi
     
-    sed -e "1i<Directory \"$TGT_PATH\">\n" -i $SCP_DIR/route.conf
+    echo "*** edit route.conf"
+    sed -i -e '1,1d' /etc/httpd/conf.d/${APP_TITLE}.conf
+    sed -i -e "1i <Directory \"$TGT_PATH/$APP_TITLE\">" /etc/httpd/conf.d/${APP_TITLE}.conf
     if [ $? != 0 ]; then
-        exit;
-    fi
-
-    cp $SCP_DIR/route.conf /etc/httpd/conf.d/
-    if [ $? != 0 ]; then
-        exit;
+        error "edit route.conf is failed"
     fi
     
-    rm $SCP_DIR/route.conf
-    if [ $? != 0 ]; then
-        exit;
-    fi
-    
+    echo "*** restart httpd"
     systemctl stop httpd
-    if [ $? != 0 ]; then
-        exit;
-    fi
     systemctl start httpd
-    if [ $? != 0 ]; then
-        exit;
-    fi
 }
 
-ttr () {
-    cd $SCP_DIR/../src/php
+add_pack () {
+    echo "*** copy routing src"
+    cp -r $SCP_DIR/../src/ $TGT_PATH/$APP_TITLE
     
-    if [ -d ./ttr ]; then
-        echo -n ''
-    else
+    cd $TGT_PATH/$APP_TITLE/src/php
+    if [ $? != 0 ]; then
+        error "could not change dir : $TGT_PATH/$APP_TITLE/src/php"
+    fi
+    
+    echo "*** configure routing"
+    sed -i -e "s/@APP_TITLE/$APP_TITLE/g" $TGT_PATH/$APP_TITLE/src/php/rtg/define.php
+    if [ $? != 0 ]; then
+        error "could not edit file $TGT_PATH/src/php/rtg/define.php"
+    fi
+
+    if [ ! -d "./ttr" ]; then
+        echo -e "*** install tetraring4php"
         git clone https://github.com/simpart/tetraring4php.git ttr
+        if [ $? != 0 ]; then
+            error "could not clone github.com/simpart/tetraring4php.git"
+        fi
+    fi
+       
+    echo "*** copy url mapping config template"
+    cp -r $SCP_DIR/../conf/urlmap/ $TGT_PATH/$APP_TITLE/conf/
+    if [ $? != 0 ]; then
+        error "could not copy $SCP_DIR/../conf/urlmap/ -> $TGT_PATH/$APP_TITLE/conf/"
     fi
 }
 
-check_path
+error () {
+    echo "ERROR : $1"
+    echo "ttr-web build is failed"
+    exit -1
+}
+
+get_inf
 init_php
 init_serv
+add_pack
 
+echo "ttr-web build is succeed"
 #index
 
 #ttr

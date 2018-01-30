@@ -46,6 +46,5 @@ try {
     http_response_code(500);
     // get debug log
     //\ttr\rest\errResp($e->getMessage());
-    var_dump($e->getMessage());
 }
 /* end of file */

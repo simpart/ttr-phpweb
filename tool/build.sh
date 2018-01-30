@@ -106,9 +106,48 @@ add_pack () {
     fi
        
     echo "*** copy url mapping config template"
-    cp -r $SCP_DIR/../conf/urlmap/ $TGT_PATH/$APP_TITLE/conf/
+    sudo cp -r $SCP_DIR/../conf/urlmap/ $TGT_PATH/$APP_TITLE/conf/
     if [ $? != 0 ]; then
         error "could not copy $SCP_DIR/../conf/urlmap/ -> $TGT_PATH/$APP_TITLE/conf/"
+    fi
+    
+}
+
+deploy_index () {
+    echo "*** deploy index"
+    sudo cp $TGT_PATH/$APP_TITLE/index.html $TGT_PATH/$APP_TITLE/html/
+    if [ $? != 0 ]; then
+        error "copy template was failed"
+    fi
+    
+    grep -l '<title></title>' $TGT_PATH/$APP_TITLE/html/index.html | xargs sed -i.bak -e "s/<title><\/title>/<title>${APP_TITLE}<\/title>/g"
+    if [ $? != 0 ]; then
+        error "replace string was failed"
+    fi
+    
+    sudo rm $TGT_PATH/$APP_TITLE/html/index.html.bak
+    
+    PAGEMAP="$TGT_PATH/$APP_TITLE/conf/urlmap/pagemap.yaml"
+    if [ ! -f $PAGEMAP ]; then
+        sudo touch $PAGEMAP
+        echo "-" >> $PAGEMAP
+        if [ $? != 0 ]; then
+            error "add urlmap was failed"
+        fi
+        echo "  url   : /" >> $PAGEMAP
+        echo "  conts : ./html/index.html" >> $PAGEMAP
+        
+    fi
+}
+
+add_scp () {
+    sudo cp $SCP_DIR/addpage.sh $TGT_PATH/$APP_TITLE/tool/
+    if [ $? != 0 ]; then
+        error "copy addpage script was faild"
+    fi
+    sudo cp -r $SCP_DIR/tmpl $TGT_PATH/$APP_TITLE/tool/
+    if [ $? != 0 ]; then
+        error "copy template was faild"
     fi
 }
 
@@ -122,5 +161,7 @@ get_inf
 init_php
 init_serv
 add_pack
+deploy_index
+add_scp
 
 echo "ttr-web build is succeed"

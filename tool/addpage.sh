@@ -37,42 +37,41 @@ fi
 
 
 # add html
-sudo cp ./tool/tmpl/index.html ./tool/buff.html
+ADDHTML="./html/${PAGE_NAME}.html"
+sudo cp ./tool/tmpl/index.html $ADDHTML
 if [ $? != 0 ]; then
     error "copy template was failed"
 fi
-
-grep -l '{@pagename}' ./tool/buff.html | xargs sed -i.bak -e "s/{@pagename}/$PAGE_NAME/g"
+grep -l '{@pagename}' $ADDHTML | xargs sed -i.bak -e "s/{@pagename}/$PAGE_NAME/g"
 if [ $? != 0 ]; then
     error "replace string was failed"
 fi
+sudo rm ${ADDHTML}.bak
 
-sudo cp ./tool/buff.html ./html/${PAGE_NAME}.html
+# add javascript
+ADDJS="./src/js/ctrl/init/${PAGE_NAME}.js"
+sudo cp ./tool/tmpl/index.js $ADDJS
 if [ $? != 0 ]; then
-    error "add html file was failed"
+    error "copy template was failed"
 fi
-
-sudo rm ./tool/buff.html ./tool/buff.html.bak
-
-
+grep -l '{@pagename}' $ADDJS | xargs sed -i.bak -e "s/{@pagename}/$PAGE_NAME/g"
+if [ $? != 0 ]; then
+    error "replace string was failed"
+fi
+sudo rm ${ADDJS}.bak
 
 # add webpack config
-sudo cp ./tool/tmpl/webpack.config.js ./tool/webpack.config.js.buff
+ADDWEBPK="./conf/webpack/webpack.config.${PAGE_NAME}.js"
+sudo cp ./tool/tmpl/webpack.config.js $ADDWEBPK
 if [ $? != 0 ]; then
     error "copy template was failed"
 fi
 
-grep -l '{@pagename}' ./tool/webpack.config.js.buff | xargs sed -i.bak -e "s/{@pagename}/$PAGE_NAME/g"
+grep -l '{@pagename}' $ADDWEBPK | xargs sed -i.bak -e "s/{@pagename}/$PAGE_NAME/g"
 if [ $? != 0 ]; then
     error "replace string was failed"
 fi
-
-sudo cp ./tool/webpack.config.js.buff ./conf/webpack/webpack.config.${PAGE_NAME}.js
-if [ $? != 0 ]; then
-    error "add webpack file was failed"
-fi
-
-sudo rm ./tool/webpack.config.js.buff ./tool/webpack.config.js.buff.bak
+sudo rm ${ADDWEBPK}.bak
 
 # add build script
 WEBPACK1='echo $($WEBPACK --config '

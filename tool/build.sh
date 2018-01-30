@@ -34,9 +34,6 @@ init_php () {
     
     echo "*** install remi-release"
     rpm -Uvh http://rpms.famillecollet.com/enterprise/remi-release-7.rpm
-    if [ $? != 0 ]; then
-        error "could not install remi-release"
-    fi
     
     echo "*** install php7"
     yum install -y --enablerepo=remi,remi-php70 php php-devel php-pear
@@ -44,9 +41,6 @@ init_php () {
     echo "*** install yaml-module"
     # install yaml module
     yum install -y gcc libyaml libyaml-devel
-    if [ $? != 0 ]; then
-        error "could not install require package"
-    fi
     pear channel-update pear.php.net
     pecl install YAML
     

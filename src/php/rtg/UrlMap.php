@@ -188,7 +188,7 @@ class UrlMap {
                     } else if ($cidx >= count($p_url->getUrl())) {
                         $mch = false;
                         break;
-                    } else if (0 === strcmp($p_url->getUrl($cidx), $cval)) {
+                    } else if (0 === strcmp($p_url->getUrl($cidx+1), $cval)) {
                         continue;
                     } else {
                         $mch = false;

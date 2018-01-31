@@ -4,7 +4,7 @@
  */
 let mf = require('mofron');
 /* app ctrl */
-let theme = require('../../conf/theme.js');
+let theme = require('../conf/theme.js');
 
 /**
  * page init function
@@ -21,7 +21,7 @@ let start = (rt) => {
 }
 
 try {
-    require('expose-loader?app!../../conf/namesp.js');
+    require('expose-loader?app!../conf/namesp.js');
     theme.theme(app.root.theme());
     start(app.root);
     app.root.visible(true);

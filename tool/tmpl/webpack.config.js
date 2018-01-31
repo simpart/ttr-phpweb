@@ -1,6 +1,6 @@
 const webpack =　require("webpack");
 module.exports = {
-    entry: __dirname + '/../../src/js/ctrl/init/{@pagename}.js',
+    entry: __dirname + '/../../src/js/init/{@pagename}.js',
     output: {
         path: __dirname + '/../../src/js/app',
         filename: '{@pagename}.js'

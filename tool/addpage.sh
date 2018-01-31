@@ -49,7 +49,7 @@ fi
 sudo rm ${ADDHTML}.bak
 
 # add javascript
-ADDJS="./src/js/ctrl/init/${PAGE_NAME}.js"
+ADDJS="./src/js/init/${PAGE_NAME}.js"
 sudo cp ./tool/tmpl/index.js $ADDJS
 if [ $? != 0 ]; then
     error "copy template was failed"

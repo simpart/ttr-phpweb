@@ -94,9 +94,11 @@ class UrlMap {
     public function isAttr ($url, $chk) {
         try {
             $attr = $this->getAttr($url);
-            foreach ($attr as $elm) {
-                if (0 === strcmp($elm, $chk)) {
-                    return true;
+            if (null !== $attr) {
+                foreach ($attr as $elm) {
+                    if (0 === strcmp($elm, $chk)) {
+                        return true;
+                    }
                 }
             }
             return false;
@@ -134,7 +136,8 @@ class UrlMap {
     public function existsAttr ($attr) {
         try {
             foreach ($this->conf as $cnf_elm) {
-                if (false === array_key_exists('attr', $cnf_elm)) {
+                if ( (false === array_key_exists('attr', $cnf_elm)) ||
+                     (null === $cnf_elm['attr']) ) {
                     continue;
                 }
                 foreach ($cnf_elm['attr'] as $atr_elm) {
@@ -163,7 +166,7 @@ class UrlMap {
             
             foreach ($this->conf as $celm) {
                 $c_url = new \ttr\routing\URL($celm['url']);
-                // check root request
+                // check root(/) request
                 if (0 === count($c_url->getUrl())) {
                     if (0 === count($p_url->getUrl())) {
                         return $celm;
@@ -175,7 +178,7 @@ class UrlMap {
                 // check matched url
                 $mch     = true;
                 $cnf_url = $c_url->getUrl();
-
+                
                 foreach ($cnf_url as $cidx => $cval) {
                     // check regex
                     if (0 === strcmp('*', $cval)) {

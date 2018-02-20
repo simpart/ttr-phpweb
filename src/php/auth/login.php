@@ -5,14 +5,22 @@
  * @author simpart
  */
 namespace auth;
+require_once(__DIR__ . '/../com/define.php');
+require_once(__DIR__ . '/func.php');
+require_once(__DIR__ . '/define.php');
  
 try {
-    return "login auth";
-        // login process
-        
-        // successful loggedin
-        // $ses   = new \ttr\session\Controller(DCOM_APP_TITLE);
-        // $ses->set(DATHLGN_CHKKEY, true);
+    $post = json_decode(file_get_contents('php://input'));
+    /* login authentication */
+    if (false === authLogin($post->username, $post->password)) {
+        return false;
+    }
+    
+    /* set session */
+    $ses   = new \ttr\session\Controller(DCOM_APP_TITLE);
+    $ses->set(DATH_LGN_KEY, true);
+    
+    return true;
 } catch (\Exception $e) {
     throw new \Exception(
                PHP_EOL .

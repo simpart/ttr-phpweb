@@ -92,7 +92,7 @@ add_pack () {
     fi
     
     echo "*** configure routing"
-    sed -i -e "s/@APP_TITLE/$APP_TITLE/g" $TGT_PATH/$APP_TITLE/src/php/rtg/define.php
+    sed -i -e "s/@APP_TITLE/$APP_TITLE/g" $TGT_PATH/$APP_TITLE/src/php/com/define.php
     if [ $? != 0 ]; then
         error "could not edit file $TGT_PATH/src/php/rtg/define.php"
     fi

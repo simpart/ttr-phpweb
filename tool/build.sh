@@ -97,7 +97,7 @@ add_pack () {
         error "could not edit file $TGT_PATH/src/php/rtg/define.php"
     fi
 
-    if [ ! -d "./ttr" ]; then
+    if [ ! -f "./ttr/require.php" ]; then
         echo -e "*** install tetraring4php"
         git clone https://github.com/simpart/tetraring4php.git ttr
         if [ $? != 0 ]; then
@@ -115,12 +115,17 @@ add_pack () {
 
 deploy_index () {
     echo "*** deploy index"
-    sudo cp $TGT_PATH/$APP_TITLE/index.html $TGT_PATH/$APP_TITLE/html/
+    sudo cp $SCP_DIR/tmpl/index.html $TGT_PATH/$APP_TITLE/html/
     if [ $? != 0 ]; then
         error "copy template was failed"
     fi
     
-    grep -l '<title></title>' $TGT_PATH/$APP_TITLE/html/index.html | xargs sed -i.bak -e "s/<title><\/title>/<title>${APP_TITLE}<\/title>/g"
+    grep -l '<title>{@pagename}</title>' $TGT_PATH/$APP_TITLE/html/index.html | xargs sed -i.bak -e "s/<title>{@pagename}<\/title>/<title>${APP_TITLE}<\/title>/g"
+    if [ $? != 0 ]; then
+        error "replace string was failed"
+    fi
+    
+    grep -l "<script src='./src/js/app/{@pagename}.js' defer></script>" $TGT_PATH/$APP_TITLE/html/index.html | xargs sed -i.bak -e "s/<script src='.\/src\/js\/app\/{@pagename}.js' defer><\/script>/<script src='.\/src\/js\/app\/index.js' defer><\/script>/g"
     if [ $? != 0 ]; then
         error "replace string was failed"
     fi

@@ -3,6 +3,8 @@
  * @brief {@pagename} page initialization
  */
 let mf = require('mofron');
+require('expose-loader?app!../conf/namesp.js');
+
 /* app ctrl */
 let theme = require('../conf/theme.js');
 
@@ -21,7 +23,6 @@ let start = (rt) => {
 }
 
 try {
-    require('expose-loader?app!../conf/namesp.js');
     theme.theme(app.root.theme());
     start(app.root);
     app.root.visible(true);

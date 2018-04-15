@@ -12,9 +12,11 @@ class User {
     private $passwd = null;
     private $role   = null;
     
-    function __construct ($nm=null) {
+    function __construct ($nm=null, $pwd=null, $rol=null) {
         try {
             $this->name($nm);
+            $this->password($pwd);
+            $this->role($rol);
         } catch (\Exception $e) {
             throw new \Exception(
                 PHP_EOL   .

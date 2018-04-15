@@ -18,10 +18,11 @@ try {
     
     /* set session */
     $ses   = new \ttr\session\Controller(DCOM_APP_TITLE);
-    $ses->set(DATH_LGN_KEY, true);
+    $ses->set(DATH_LGNCHK, true);
     
     return true;
 } catch (\Exception $e) {
+echo $e->getMessage();
     throw new \Exception(
                PHP_EOL .
                'File:' . __FILE__     . ',' .

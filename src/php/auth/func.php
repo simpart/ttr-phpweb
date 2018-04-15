@@ -54,7 +54,7 @@ function authLogin ($usr, $pwd) {
 function isLoggedin () {
     try {
         $ses   = new \ttr\session\Controller(DCOM_APP_TITLE);
-        $login = $ses->get(DATH_LGN_KEY);
+        $login = $ses->get(DATH_LGNCHK);
         if (true !== $login) {
             return false;
         }

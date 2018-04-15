@@ -38,7 +38,6 @@ try {
     \ttr\header\setContsType($path);
     /* return contents or execute api */
     $ret = require($path);
-
     /* return api value */
     if (true === $rst_flg) {
         \ttr\rest\resp($ret);

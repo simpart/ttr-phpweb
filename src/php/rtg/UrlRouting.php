@@ -25,6 +25,7 @@ class UrlRouting {
      */
     function __construct($u, $t, $c) {
         try {
+
             $this->url = new \ttr\routing\URL($u);
             if (0 === strcmp($this->url->getUrl(0), $t)) {
                 $this->url->setOffset(1);

@@ -47,12 +47,12 @@ class Mongo implements Ctrl {
             
             $this->ctrl->add(
                 DUSR_MNGCOL,
-                [ 
+                array( 
                   'id'       => $usr->id()      ,
                   'name'     => $usr->name()    ,
                   'password' => $usr->password(),
                   'role'     => $usr->role()
-                ]
+                )
             );
         } catch (\Exception $e) {
             throw new \Exception(

@@ -118,4 +118,4 @@ add_backend
 deploy_index
 add_tools
 
-echo "successful setup develop env"
+echo "*** successful setup develop env"

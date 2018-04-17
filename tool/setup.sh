@@ -1,12 +1,8 @@
 #/bin/bash
+SCP_DIR=$(cd $(dirname $0);pwd);
+cd $SCP_DIR
 
-SETUP_SH=`./setup/develop.sh`
-echo $SETUP_SH
-
-SETUP_SH=`./setup/php.sh`
-echo $SETUP_SH
-
-SETUP_SH=`./setup/http.sh`
-echo $SETUP_SH
-
+bash ./setup/develop.sh
+bash ./setup/php.sh
+bash ./setup/http.sh
 

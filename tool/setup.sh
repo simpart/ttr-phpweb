@@ -56,7 +56,7 @@ if [ $? != 0 ]; then
     exit -1
 fi
 
-bash ./setup/mondo.sh
+bash ./setup/mongo.sh
 if [ $? != 0 ]; then
     exit -1
 fi

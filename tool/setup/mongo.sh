@@ -7,12 +7,14 @@ error () {
     exit -1
 }
 
-cat $SCP_DIR/../../tmpl/mongodb.repo >  /etc/yum.repos.d/mongodb.repo
+echo "*** start setup mongo"
+
+cat $SCP_DIR/../tmpl/mongodb.repo >  /etc/yum.repos.d/mongodb.repo
 yum install -y mongodb-org
 systemctl enable mongod
 systemctl start mongod
     
-yum --enablerepo=epel,remi,remi-php70 install php70-php-pecl-mongodb
+yum --enablerepo=epel,remi,remi-php70 install -y php70-php-pecl-mongodb
     
 EXT_TXT="extension="$(find / -name "mongodb.so")
 INI_PATH="/etc/php.ini"
@@ -25,3 +27,5 @@ if [[ "" == ${CHK_EXT} ]]; then
     echo -e "\n*** add extension to php.ini ***\n"
     echo $EXT_TXT >> $INI_PATH
 fi
+
+echo "*** successful setup mongo"

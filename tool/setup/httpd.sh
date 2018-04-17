@@ -5,7 +5,7 @@ APP_TITLE=$2
 
 error () {
     echo "ERROR : $1"
-    echo "ttr-web build is failed"
+    echo "setup httpd is failed"
     exit -1
 }
 

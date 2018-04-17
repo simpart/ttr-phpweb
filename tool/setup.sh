@@ -5,6 +5,12 @@ cd $SCP_DIR
 TGT_PATH=$1
 APP_TITLE=$2
 
+error () {
+    echo "ERROR : $1"
+    echo "setup is failed"
+    exit -1
+}
+
 get_inf () {
     # get deploy target path
     if [[ $TGT_PATH == "" ]]; then

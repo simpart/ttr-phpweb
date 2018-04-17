@@ -3,7 +3,7 @@ SCP_DIR=$(cd $(dirname $0);pwd);
 
 error () {
     echo "ERROR : $1"
-    echo "ttr-web build is failed"
+    echo "setup mongo is failed"
     exit -1
 }
 

@@ -107,7 +107,7 @@ add_tools () {
 
 error () {
     echo "ERROR : $1"
-    echo "ttr-web build is failed"
+    echo "setup routing is failed"
     exit -1
 }
 

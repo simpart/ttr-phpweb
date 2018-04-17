@@ -1,4 +1,12 @@
 #/bin/bash
+
+error () {
+    echo "ERROR : $1"
+    echo "setup php is failed"
+    exit -1
+}
+
+
 echo "*** start setup php"
 
 echo "*** install epel-release"

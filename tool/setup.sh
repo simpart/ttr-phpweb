@@ -1,12 +1,12 @@
 #/bin/bash
 
-SETUP_SH=`./setup_dev.sh`
+SETUP_SH=`./setup/develop.sh`
 echo $SETUP_SH
 
-SETUP_SH=`./setup_php.sh`
+SETUP_SH=`./setup/php.sh`
 echo $SETUP_SH
 
-SETUP_SH=`./setup_http.sh`
+SETUP_SH=`./setup/http.sh`
 echo $SETUP_SH
 
 

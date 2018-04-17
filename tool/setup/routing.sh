@@ -41,7 +41,7 @@ add_backend () {
     fi
     
     echo "*** configure routing"
-    sed -i -e "s/@APP_TITLE/$APP_TITLE/g" $TGT_PATH/$APP_TITLE/src/php/com/define.php
+    sed -i -e "s/@{APP_TITLE}/$APP_TITLE/g" $TGT_PATH/$APP_TITLE/src/php/com/define.php
     if [ $? != 0 ]; then
         error "could not edit file $TGT_PATH/src/php/rtg/define.php"
     fi
@@ -112,10 +112,10 @@ error () {
 }
 
 
-echo "*** start setup develop env"
+echo "*** start setup routing"
 get_inf
 add_backend
 deploy_index
 add_tools
 
-echo "*** successful setup develop env"
+echo "*** successful setup routing"

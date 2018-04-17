@@ -4,9 +4,6 @@ TGT_PATH=$1
 APP_TITLE=$2
 
 get_inf () {
-    echo "start ttr-web build"
-    cd $SCP_DIR/../
-
     # get deploy target path
     if [[ $TGT_PATH == "" ]]; then
         echo -n "deploy path : "
@@ -34,63 +31,9 @@ get_inf () {
     fi
 }
 
-init_php () {
-    echo "*** install epel-release"
-    yum install -y epel-release
-    
-    echo "*** install remi-release"
-    rpm -Uvh http://rpms.famillecollet.com/enterprise/remi-release-7.rpm
-    
-    echo "*** install php7"
-    yum install -y --enablerepo=remi,remi-php70 php php-devel php-pear
-    
-    echo "*** install yaml-module"
-    # install yaml module
-    yum install -y gcc libyaml libyaml-devel
-    pear channel-update pear.php.net
-    pecl install YAML
-    
-    EXT_TXT="extension=yaml.so"
-    INI_PATH="/etc/php.ini"
-    if [ ! -f $INI_PATH ]; then
-        error "could not found php.ini"
-    fi
-    
-    CHK_YML=$(cat $INI_PATH | grep $EXT_TXT)
-    if [[ "" == ${CHK_YML} ]]; then
-        echo -e "\n*** add extension to php.ini ***\n"
-        echo $EXT_TXT >> $INI_PATH
-    fi
-}
-
-init_serv () {
-    echo "*** install httpd"
-    yum install -y httpd
-    if [ $? != 0 ]; then
-        error "install httpd is failed"
-    fi
-    
-    echo "*** set route.conf"
-    cp $SCP_DIR/../conf/serv/httpd.conf /etc/httpd/conf.d/${APP_TITLE}.conf
-    if [ $? != 0 ]; then
-        error "set route.conf is failed"
-    fi
-    
-    echo "*** edit route.conf"
-    sed -i -e '1,1d' /etc/httpd/conf.d/${APP_TITLE}.conf
-    sed -i -e "1i <Directory \"$TGT_PATH/$APP_TITLE\">" /etc/httpd/conf.d/${APP_TITLE}.conf
-    if [ $? != 0 ]; then
-        error "edit route.conf is failed"
-    fi
-    
-    echo "*** restart httpd"
-    systemctl stop httpd
-    systemctl start httpd
-}
-
-add_pack () {
+add_backend () {
     echo "*** copy routing src"
-    cp -r $SCP_DIR/../src/ $TGT_PATH/$APP_TITLE
+    cp -r $SCP_DIR/../../src/ $TGT_PATH/$APP_TITLE
     
     cd $TGT_PATH/$APP_TITLE/src/php
     if [ $? != 0 ]; then
@@ -112,16 +55,16 @@ add_pack () {
     fi
        
     echo "*** copy url mapping config template"
-    sudo cp -r $SCP_DIR/../conf/urlmap/ $TGT_PATH/$APP_TITLE/conf/
+    sudo cp -r $SCP_DIR/../../conf/urlmap/ $TGT_PATH/$APP_TITLE/conf/
     if [ $? != 0 ]; then
-        error "could not copy $SCP_DIR/../conf/urlmap/ -> $TGT_PATH/$APP_TITLE/conf/"
+        error "could not copy $SCP_DIR/../../conf/urlmap/ -> $TGT_PATH/$APP_TITLE/conf/"
     fi
     
 }
 
 deploy_index () {
     echo "*** deploy index"
-    sudo cp $SCP_DIR/tmpl/index.html $TGT_PATH/$APP_TITLE/html/
+    sudo cp $SCP_DIR/../tmpl/index.html $TGT_PATH/$APP_TITLE/html/
     if [ $? != 0 ]; then
         error "copy template was failed"
     fi
@@ -151,12 +94,12 @@ deploy_index () {
     fi
 }
 
-add_scp () {
-    sudo cp $SCP_DIR/addpage.sh $TGT_PATH/$APP_TITLE/tool/
+add_tools () {
+    sudo cp $SCP_DIR/../addpage.sh $TGT_PATH/$APP_TITLE/tool/
     if [ $? != 0 ]; then
         error "copy addpage script was faild"
     fi
-    sudo cp -r $SCP_DIR/tmpl $TGT_PATH/$APP_TITLE/tool/
+    sudo cp -r $SCP_DIR/../tmpl $TGT_PATH/$APP_TITLE/tool/
     if [ $? != 0 ]; then
         error "copy template was faild"
     fi
@@ -168,11 +111,11 @@ error () {
     exit -1
 }
 
-get_inf
-init_php
-init_serv
-add_pack
-deploy_index
-add_scp
 
-echo "ttr-web build is succeed"
+echo "*** start setup develop env"
+get_inf
+add_backend
+deploy_index
+add_tools
+
+echo "successful setup develop env"

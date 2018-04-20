@@ -5,6 +5,7 @@
  */
 namespace auth;
 require_once(__DIR__ . '/define.php');
+require_once(__DIR__ . '/../com/define.php');
 require_once(__DIR__ . '/../ttr/class.php');
 
 /**
@@ -20,24 +21,15 @@ function authLogin ($usr, $pwd) {
         }
         
         /* check login auth */
-        $mng = new \usr\ctl\Mongo();
-        $fnd_usr = $mng->find($usr);
-        if (null === $fnd_usr) {
-            /* invalid username */
+        $ctrl = new \ttr\db\mongo\ctrl\Collection(
+                    DCOM_DB_HOST,
+                    DCOM_APP_TITLE,
+                    'user'
+                );
+        if (null === $ctrl->find(new \usr\User($usr, $pwd))) {
+            /* invalid username or password */
             return false;
         }
-        
-        $chk_usr = new \usr\User($usr);
-        $chk_usr->password($pwd);
-        $cmp = strcmp(
-                   $fnd_usr[0]->password(),
-                   $chk_usr->password()
-               );
-        if (0 !== $cmp)  {
-            /* invalid password */
-            return false;
-        }
-        
         /* successful loggedin */
         return true;
     } catch (\Exception $e) {

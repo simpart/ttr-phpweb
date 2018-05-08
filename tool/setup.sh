@@ -39,7 +39,15 @@ get_inf () {
     fi
 }
 
+add_tools () {
+    sudo cp -r $SCP_DIR/init $TGT_PATH/$APP_TITLE/tool/
+    if [ $? != 0 ]; then
+        error "copy addpage script was faild"
+    fi
+}
+
 get_inf
+add_tools
 
 bash ./setup/routing.sh $TGT_PATH $APP_TITLE
 if [ $? != 0 ]; then

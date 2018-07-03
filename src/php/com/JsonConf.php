@@ -37,7 +37,39 @@ class JsonConf {
         try {
             $fpath = __DIR__ . '/../../../conf/' . $this->base . '/' . $this->name . '.json';
             $jcnf  = file_get_contents($fpath);
-            return json_decode($jcnf);
+            $temp  = json_decode($jcnf);
+            
+            return $this->parse($temp);
+        } catch (\Exception $e) {
+            throw new \Exception(
+                PHP_EOL   .
+                'File:'   . __FILE__         . ',' .
+                'Line:'   . __line__         . ',' .
+                'Class:'  . get_class($this) . ',' .
+                'Method:' . __FUNCTION__     . ',' .
+                $e->getMessage()
+            );
+        }
+    }
+    
+    private function parse ($prm) {
+        try {
+            if ((false === is_array($prm)) && (false === is_object($prm))) {
+                return $prm;
+            }
+            $ret = null;
+            if (true === is_object($prm)) {
+                foreach ($prm as $key => $val) {
+                    $ret[$key] = $this->parse($val);
+                }
+            } else if (array_values($prm) === $prm) {
+                foreach ($prm as $val) {
+                    $ret[] = $this->parse($val);
+                }
+            } else {
+                throw new \Exception('invalid parameter');
+            }
+            return $ret;
         } catch (\Exception $e) {
             throw new \Exception(
                 PHP_EOL   .
